@@ -1,0 +1,47 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/RubySinatraServerCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/RubySinatraServerCodegen.java
+index 1e51a349e0d..c71c5a57b21 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/RubySinatraServerCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/RubySinatraServerCodegen.java
+@@ -88,6 +88,7 @@ public class RubySinatraServerCodegen extends AbstractRubyCodegen {
+         supportingFiles.add(new SupportingFile("README.md", "", "README.md"));
+         supportingFiles.add(new SupportingFile("openapi.mustache", "", "openapi.yaml"));
+         supportingFiles.add(new SupportingFile("Dockerfile", "", "Dockerfile"));
++	supportingFiles.add(new SupportingFile("helpers.mustache", "api", "helpers.rb"));
+     }
+ 
+     @Override
+diff --git a/modules/openapi-generator/src/main/resources/ruby-sinatra-server/api.mustache b/modules/openapi-generator/src/main/resources/ruby-sinatra-server/api.mustache
+index 92db211f619..da650f3b2f3 100644
+--- a/modules/openapi-generator/src/main/resources/ruby-sinatra-server/api.mustache
++++ b/modules/openapi-generator/src/main/resources/ruby-sinatra-server/api.mustache
+@@ -54,9 +54,9 @@ MyApp.add_route('{{httpMethod}}', '{{{basePathWithoutHost}}}{{{path}}}', {
+     {{/bodyParams}}
+     ]}) do
+   cross_origin
+-  # the guts live here
++  # the guts live with helpers
+ 
+-  {"message" => "yes, it worked"}.to_json
++  {{nickname}}
+ end
+ 
+ {{/operation}}
+diff --git a/modules/openapi-generator/src/main/resources/ruby-sinatra-server/helpers.mustache b/modules/openapi-generator/src/main/resources/ruby-sinatra-server/helpers.mustache
+new file mode 100644
+index 00000000000..3752d1c649d
+--- /dev/null
++++ b/modules/openapi-generator/src/main/resources/ruby-sinatra-server/helpers.mustache
+@@ -0,0 +1,13 @@
++class MyApp
++  helpers do
++{{#apiInfo}}
++{{#apis}}
++{{#operations}}{{#operation}}
++    def {{nickname}}
++      JSON.pretty_generate({"message" => "yes, it worked", "request.url" => request.url, "params" => params})
++    end
++{{/operation}}{{/operations}}
++{{/apis}}
++{{/apiInfo}}
++  end
++end
