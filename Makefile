@@ -4,7 +4,7 @@ DOCKER_BUILDER = mabuilder
 
 NAME = my-ogc
 DOCKER_IMAGE = my-ogc
-DOCKER_IMAGE_VERSION = 7.5.0
+DOCKER_IMAGE_VERSION = 7.10.0
 IMAGE_NAME = $(DOCKER_IMAGE):$(DOCKER_IMAGE_VERSION)
 REGISTRY_SERVER = docker.io
 REGISTRY_LIBRARY = yasuhiroabe
@@ -21,7 +21,7 @@ docker-build:
 
 .PHONY: docker-build-prod
 docker-build-prod:
-	$(DOCKER_CMD) build . --tag $(IMAGE_NAME) --no-cache
+	$(DOCKER_CMD) build . --pull --tag $(IMAGE_NAME) --no-cache
 
 .PHONY: docker-tag
 docker-tag:
